@@ -12,6 +12,9 @@ namespace CMS.Application.Feature.Members.Services
     {
         Task<Member> Create(MemberDto member, CancellationToken cancellationToken = default);
 
+        Task<MemberDto> Get(Guid Id, CancellationToken cancellationToken = default);
+
+
 
     }
 }

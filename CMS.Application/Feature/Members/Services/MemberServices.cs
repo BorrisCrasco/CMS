@@ -22,5 +22,12 @@ namespace CMS.Application.Feature.Members.Services
             return create;
 
         }
+
+        public async Task<MemberDto> Get(Guid Id, CancellationToken cancellationToken = default)
+        {
+            var model = await memberStore.Get(Id,cancellationToken);
+
+            return mapper.Map<MemberDto>(model);
+        }
     }
 }

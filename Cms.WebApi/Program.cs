@@ -1,4 +1,5 @@
 using Cms.Persistence.Models;
+using CMS.Application;
 using CMS.Application.Feature.Events.Handler;
 using Lipip.Atomic.EntityFramework.Behaviors;
 using MediatR;
@@ -14,9 +15,9 @@ builder.Services.AddAtomicServices<ChurchMSDBContext>(
 
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddCmsServices();
 
 var app = builder.Build();
 

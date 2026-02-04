@@ -16,7 +16,7 @@ namespace CMS.Application.Feature.Members.Dtos
         public string? Address { get; set; }
         public DateTime Birthday { get; set; }
         public string Gender { get; set; } = null!;
-        public string CreatedBy { get; set; } = null!;
+        public string? CreatedBy { get; set; }
         public DateTime CreatedDate { get; set; }
         public string? UpdatedBy { get; set; }
         public DateTime? UpdatedDate { get; set; }

@@ -3,7 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Cms.WebApi.Controllers.Events
+namespace Cms.WebApi.Controllers.Maintenance.Events
 {
     [Route("api/[controller]")]
     [ApiController]
