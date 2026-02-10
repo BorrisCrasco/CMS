@@ -8,26 +8,26 @@ namespace Lipip.Atomic.EntityFramework.Core.Paginations
 {
     public sealed class PagedRequest : IPagedRequest
     {
-        public const int DefaultTake = 10;
-        public const int MaxTake = 5000;
+        public const int DefaultPageSize = 10;
+        public const int MaxPageSize = 5000;
 
-        public int Skip { get; init; }
-        public int Take { get; init; } = DefaultTake;
+        public int PageNumber { get; }
+        public int PageSize { get; }
 
-        public PagedRequest()
+        internal int Skip => (PageNumber - 1) * PageSize;
+        internal int Take => PageSize;
+
+        public PagedRequest(int pageNumber, int pageSize)
         {
-            
+            PageNumber = pageNumber <= 0 ? 1 : pageNumber;
+            PageSize = pageSize <= 0
+                ? DefaultPageSize
+                : Math.Min(pageSize, MaxPageSize);
+
         }
 
-        public PagedRequest(int skip, int take)
-        {
-            Skip = skip < 0 ? 0 : skip;
-            Take = take <= 0 ? DefaultTake : Math.Min(take, MaxTake);
-
-        }
-
-        public static PagedRequest From(int? skip, int? take) =>
-            new(skip ?? 0, take ?? DefaultTake);
+        public static PagedRequest From(int? pageNumber, int? pageSize)
+            => new(pageNumber ?? 1, pageSize ?? DefaultPageSize);
 
     }
 }

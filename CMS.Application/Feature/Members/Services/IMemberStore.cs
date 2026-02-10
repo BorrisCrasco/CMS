@@ -11,6 +11,8 @@ namespace CMS.Application.Feature.Members.Services
     {
         Task Create(Member member, CancellationToken cancellation = default);
         Task<IEnumerable<Member>> Gets(CancellationToken cancellation = default);
+        IQueryable<Member> Query();
+
         Task<Member?> Get(Guid id, CancellationToken cancellation = default);
         Task<Member?> GetForUpdate(Guid id, CancellationToken cancellation = default);
     }

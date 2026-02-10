@@ -11,19 +11,22 @@ namespace Lipip.Atomic.EntityFramework.Core.Paginations
 
         public IReadOnlyList<T> Items { get; }
         public int TotalCount { get; }
-        public int Skip { get; }
-        public int Take { get; }
+        public int PageNumber { get; }
+        public int PageSize { get; }
 
-        public bool HasPrevious => Skip > 0;
-        public bool HasNext => Skip + Take < TotalCount;
+        public int TotalPages =>
+            (int)Math.Ceiling((double)TotalCount / PageSize);
 
+        public bool HasPrevious => PageNumber > 1;
+        public bool HasNext => PageNumber < TotalPages;
 
-        public PagedResult(IReadOnlyList<T> items, int totalCount, int skip, int take)
+        public PagedResult(
+            IReadOnlyList<T> items,int totalCount,int pageNumber,int pageSize)
         {
             Items = items is IReadOnlyList<T> list ? list : items.ToList();
             TotalCount = totalCount;
-            Skip = skip;
-            Take = take;
+            PageNumber = pageNumber;
+            PageSize = pageSize;
         }
 
 

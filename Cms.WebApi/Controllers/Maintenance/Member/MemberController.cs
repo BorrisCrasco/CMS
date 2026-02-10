@@ -1,6 +1,7 @@
 ﻿using CMS.Application.Feature.Events.Request;
 using CMS.Application.Feature.Members.Dtos;
 using CMS.Application.Feature.Members.Request;
+using Lipip.Atomic.EntityFramework.Core.Paginations;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,6 +13,13 @@ namespace Cms.WebApi.Controllers.Maintenance.Member
     [ApiController]
     public class MemberController(IMediator mediator) : ControllerBase
     {
+
+        [HttpGet]
+        [ProducesResponseType(typeof(PagedResult<MemberResultDto>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> Search([FromQuery] GetMembers query)
+        {
+            return Ok(await mediator.Send(query));
+        }
 
         [HttpPost]
         [ProducesResponseType<MemberDto>(StatusCodes.Status200OK)]

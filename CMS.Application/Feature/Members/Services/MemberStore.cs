@@ -16,6 +16,11 @@ namespace CMS.Application.Feature.Members.Services
             await dbContext.Members.AddAsync(member, cancellation);
         }
 
+        public IQueryable<Member> Query()
+        {
+            return dbContext.Members.AsNoTracking();
+        }
+
         public async Task<IEnumerable<Member>> Gets(CancellationToken cancellation = default)
         {
             return await dbContext.Members

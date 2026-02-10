@@ -1,5 +1,7 @@
 ﻿using Cms.Persistence.Models;
 using CMS.Application.Feature.Members.Dtos;
+using CMS.Application.Feature.Members.Request;
+using Lipip.Atomic.EntityFramework.Core.Paginations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +16,7 @@ namespace CMS.Application.Feature.Members.Services
 
         Task<MemberDto> Get(Guid Id, CancellationToken cancellationToken = default);
 
-
+        Task<PagedResult<MemberResultDto>> Gets(GetMembers request,CancellationToken cancellationToken = default);
 
     }
 }

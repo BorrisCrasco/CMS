@@ -15,22 +15,26 @@ using System.Threading.Tasks;
 
 namespace CMS.Application.Feature.Events.Handler
 {
-    public class GetEventsHandler(ChurchMSDBContext context, IMapper mapper )
+    public class GetEventsHandler(ChurchMSDBContext context, IMapper mapper)
         : IRequestHandler<GetEvents, IResult<PagedResult<EventResultsDto>>>
     {
-        public async Task<IResult<PagedResult<EventResultsDto>>> Handle(GetEvents request, CancellationToken cancellationToken)
+        //public async Task<IResult<PagedResult<EventResultsDto>>> Handle(GetEvents request, CancellationToken cancellationToken)
+        //{
+        //    //var paging = PagedRequest.From(request.Skip, request.Take);
+
+        //    //var query = context.Events
+        //    //    .AsNoTracking()
+        //    //    .ProjectToType<EventResultsDto>();    
+
+
+        //    //var page = await query.PageResultAsync(paging, cancellationToken);
+
+        //    //return Result<PagedResult<EventResultsDto>>.Success(page);
+
+        //}
+        public Task<IResult<PagedResult<EventResultsDto>>> Handle(GetEvents request, CancellationToken cancellationToken)
         {
-            var paging = PagedRequest.From(request.Skip, request.Take);
-
-            var query = context.Events
-                .AsNoTracking()
-                .ProjectToType<EventResultsDto>();    
-
-
-            var page = await query.PageResultAsync(paging, cancellationToken);
-
-            return Result<PagedResult<EventResultsDto>>.Success(page);
-
+            throw new NotImplementedException();
         }
     }
 }

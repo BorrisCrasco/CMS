@@ -2,7 +2,7 @@
 {
     public interface IPagedRequest
     {
-        int Skip { get; }
-        int Take { get; }
+        int PageNumber { get; }
+        int PageSize { get; }
     }
 }
