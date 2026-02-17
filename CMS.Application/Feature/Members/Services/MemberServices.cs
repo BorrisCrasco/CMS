@@ -2,6 +2,7 @@
 using CMS.Application.Feature.Members.Dtos;
 using CMS.Application.Feature.Members.Request;
 using Lipip.Atomic.EntityFramework.Core.Paginations;
+using Lipip.Atomic.EntityFramework.Result;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -14,7 +15,7 @@ namespace CMS.Application.Feature.Members.Services
 {
     public class MemberServices(IMapper mapper, IMemberStore memberStore) : IMemberServices
     {
-        public async Task<Member> Create(MemberDto member, CancellationToken cancellationToken = default)
+        public async Task<IResult<Member>> Create(MemberDto member, CancellationToken cancellationToken = default)
         {
             var create = mapper.Map<Member>(member);
             create.Id = Guid.NewGuid();
@@ -22,21 +23,25 @@ namespace CMS.Application.Feature.Members.Services
 
             await memberStore.Create(create,cancellationToken);
 
-            return create;
+            return Result.Success(create);
 
         }
 
-        public async Task<MemberDto> Get(Guid Id, CancellationToken cancellationToken = default)
+        public async Task<IResult<MemberDto>> Get(Guid Id, CancellationToken cancellationToken = default)
         {
             var model = await memberStore.Get(Id,cancellationToken);
+            if(model is null)
+                return Result<MemberDto>.NotFound("Id not found!");
 
-            return mapper.Map<MemberDto>(model);
+            var dto = mapper.Map<MemberDto>(model);
+
+            return Result.Success(dto);
         }
 
         public async Task<PagedResult<MemberResultDto>> Gets(GetMembers request, CancellationToken cancellationToken = default) 
         {
 
-            var paging = PagedRequest.From(request.PageSize, request.PageNumber);
+            var paging = PagedRequest.From(request.PageNumber, request.PageSize);
 
             var query = memberStore.Query();
 
@@ -45,8 +50,6 @@ namespace CMS.Application.Feature.Members.Services
                 var search = request.Search.Trim();
                 query = query.Where(x => EF.Functions.Like(x.Name, $"%{search}%"));
             }
-
-            query = query.OrderBy(x => x.CreatedDate);
 
             var page = await query.PageResultAsync(paging, cancellationToken);
 
@@ -57,10 +60,55 @@ namespace CMS.Application.Feature.Members.Services
             return new PagedResult<MemberResultDto>(
                 mapped,
                 page.TotalCount,
-                page.PageSize,
-                page.PageNumber
+                page.PageNumber,
+                page.PageSize
             );
 
+        }
+
+
+        public async Task<IResult<Member>> Update(MemberDto member, CancellationToken cancellationToken = default)
+        {
+            var model = await memberStore.GetForUpdate(member.Id, cancellationToken);
+            if (model is null)
+                return Result<Member>.NotFound("Id not found!");
+
+            var dto = mapper.Map(member, model);
+            dto.UpdatedDate = DateTime.Now;
+
+            return Result.Success(dto);
+
+        }
+        public async Task<IResult<Guid>> DeactivateMember(Guid id, CancellationToken cancellationToken = default)
+        {
+            var model = await memberStore.GetForUpdate(id, cancellationToken);
+            if (model is null)
+                return Result<Guid>.NotFound("Id not found!");
+
+            model.IsActive = false;
+
+            return Result.Success(model.Id);
+        }
+
+        public async Task<IResult<Guid>> ReactivateMember(Guid id, CancellationToken cancellationToken = default)
+        {
+            var model = await memberStore.GetForUpdate(id, cancellationToken);
+            if (model is null)
+                return Result<Guid>.NotFound("Id not found!");
+
+            model.IsActive = true;
+
+            return Result.Success(model.Id);
+        }
+
+        public async Task<IResult<IEnumerable<GenderDto>>> GetGenders(CancellationToken cancellationToken = default)
+        {
+            var query = await memberStore.GetGenders();
+
+            var dtos = mapper.Map<IEnumerable<GenderDto>>(query);
+
+            return Result.Success(dtos);
+           
         }
     }
 }

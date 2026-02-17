@@ -15,12 +15,40 @@
    "T4TemplatePath": null,
    "Tables": [
       {
+         "Name": "[auth].[Menu]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[auth].[Module]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[auth].[Role]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[auth].[RoleModule]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[auth].[User]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[master].[Event]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[master].[Gender]",
          "ObjectType": 0
       },
       {
          "Name": "[master].[Member]",
          "ObjectType": 0
+      },
+      {
+         "Name": "[master].[vwMember]",
+         "ObjectType": 3
       }
    ],
    "UiHint": null,

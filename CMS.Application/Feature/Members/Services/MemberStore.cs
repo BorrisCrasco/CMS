@@ -16,22 +16,22 @@ namespace CMS.Application.Feature.Members.Services
             await dbContext.Members.AddAsync(member, cancellation);
         }
 
-        public IQueryable<Member> Query()
+        public IQueryable<VwMember> Query()
         {
-            return dbContext.Members.AsNoTracking();
+            return dbContext.VwMembers.AsNoTracking();
         }
 
-        public async Task<IEnumerable<Member>> Gets(CancellationToken cancellation = default)
+        public async Task<IEnumerable<VwMember>> Gets(CancellationToken cancellation = default)
         {
-            return await dbContext.Members
+            return await dbContext.VwMembers
                 .AsNoTracking()
                 .ToListAsync(cancellation);
 
         }
 
-        public async Task<Member?> Get(Guid id, CancellationToken cancellation = default)
+        public async Task<VwMember?> Get(Guid id, CancellationToken cancellation = default)
         {
-            var model = await dbContext.Members
+            var model = await dbContext.VwMembers
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == id, cancellation) ?? null;
 
@@ -47,6 +47,11 @@ namespace CMS.Application.Feature.Members.Services
             return model;
         }
 
-
+        public async Task<IEnumerable<Gender>> GetGenders(CancellationToken cancellation = default)
+        {
+            return await dbContext.Genders
+                .AsNoTracking()
+                .ToListAsync(cancellation);
+        }
     }
 }

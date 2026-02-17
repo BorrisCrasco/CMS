@@ -15,7 +15,21 @@ public partial class ChurchMSDBContext : DbContext
 
     public virtual DbSet<Event> Events { get; set; }
 
+    public virtual DbSet<Gender> Genders { get; set; }
+
     public virtual DbSet<Member> Members { get; set; }
+
+    public virtual DbSet<Menu> Menus { get; set; }
+
+    public virtual DbSet<Module> Modules { get; set; }
+
+    public virtual DbSet<Role> Roles { get; set; }
+
+    public virtual DbSet<RoleModule> RoleModules { get; set; }
+
+    public virtual DbSet<User> Users { get; set; }
+
+    public virtual DbSet<VwMember> VwMembers { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -26,6 +40,15 @@ public partial class ChurchMSDBContext : DbContext
             entity.ToTable("Event", "master");
 
             entity.Property(e => e.Id).ValueGeneratedNever();
+        });
+
+        modelBuilder.Entity<Gender>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Gender__3214EC076C1AD65D");
+
+            entity.ToTable("Gender", "master");
+
+            entity.Property(e => e.Name).HasMaxLength(100);
         });
 
         modelBuilder.Entity<Member>(entity =>
@@ -44,7 +67,129 @@ public partial class ChurchMSDBContext : DbContext
             entity.Property(e => e.DeletedBy).HasMaxLength(320);
             entity.Property(e => e.DeletedDate).HasColumnType("datetime");
             entity.Property(e => e.Email).HasMaxLength(320);
-            entity.Property(e => e.Gender).HasMaxLength(10);
+            entity.Property(e => e.Name).HasMaxLength(255);
+            entity.Property(e => e.PhoneNumber).HasMaxLength(50);
+            entity.Property(e => e.Timestamp)
+                .IsRowVersion()
+                .IsConcurrencyToken();
+            entity.Property(e => e.UpdatedBy).HasMaxLength(320);
+            entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
+        });
+
+        modelBuilder.Entity<Menu>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Menu__3214EC074D664C06");
+
+            entity.ToTable("Menu", "auth");
+
+            entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
+            entity.Property(e => e.CreatedBy).HasMaxLength(150);
+            entity.Property(e => e.CreatedDate).HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.DeletedBy).HasMaxLength(150);
+            entity.Property(e => e.Name).HasMaxLength(150);
+            entity.Property(e => e.Timestamp)
+                .IsRowVersion()
+                .IsConcurrencyToken();
+            entity.Property(e => e.UpdatedBy).HasMaxLength(150);
+        });
+
+        modelBuilder.Entity<Module>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Module__3214EC0768BA8C98");
+
+            entity.ToTable("Module", "auth");
+
+            entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
+            entity.Property(e => e.CreatedBy).HasMaxLength(150);
+            entity.Property(e => e.CreatedDate).HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.DeletedBy).HasMaxLength(150);
+            entity.Property(e => e.Name).HasMaxLength(150);
+            entity.Property(e => e.Path).HasMaxLength(300);
+            entity.Property(e => e.Timestamp)
+                .IsRowVersion()
+                .IsConcurrencyToken();
+            entity.Property(e => e.UpdatedBy).HasMaxLength(150);
+
+            entity.HasOne(d => d.Menu).WithMany(p => p.Modules)
+                .HasForeignKey(d => d.MenuId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Module_Menu");
+        });
+
+        modelBuilder.Entity<Role>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Role__3214EC071D1FA104");
+
+            entity.ToTable("Role", "auth");
+
+            entity.Property(e => e.CreatedBy).HasMaxLength(150);
+            entity.Property(e => e.CreatedDate).HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.DeletedBy).HasMaxLength(150);
+            entity.Property(e => e.Name).HasMaxLength(150);
+            entity.Property(e => e.Timestamp)
+                .IsRowVersion()
+                .IsConcurrencyToken();
+            entity.Property(e => e.UpdatedBy).HasMaxLength(150);
+        });
+
+        modelBuilder.Entity<RoleModule>(entity =>
+        {
+            entity.HasKey(e => new { e.RoleId, e.ModuleId });
+
+            entity.ToTable("RoleModule", "auth");
+
+            entity.Property(e => e.IsActive).HasDefaultValue(true);
+
+            entity.HasOne(d => d.Module).WithMany(p => p.RoleModules)
+                .HasForeignKey(d => d.ModuleId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_RoleModule_Module");
+
+            entity.HasOne(d => d.Role).WithMany(p => p.RoleModules)
+                .HasForeignKey(d => d.RoleId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_RoleModule_Role");
+        });
+
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__User__3214EC07EE89D755");
+
+            entity.ToTable("User", "auth");
+
+            entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
+            entity.Property(e => e.CreatedBy).HasMaxLength(150);
+            entity.Property(e => e.CreatedDate).HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.DeletedBy).HasMaxLength(150);
+            entity.Property(e => e.IsActive).HasDefaultValue(true);
+            entity.Property(e => e.PasswordHash).HasMaxLength(256);
+            entity.Property(e => e.PasswordSalt).HasMaxLength(128);
+            entity.Property(e => e.Timestamp)
+                .IsRowVersion()
+                .IsConcurrencyToken();
+            entity.Property(e => e.UpdatedBy).HasMaxLength(150);
+            entity.Property(e => e.Username).HasMaxLength(150);
+
+            entity.HasOne(d => d.Role).WithMany(p => p.Users)
+                .HasForeignKey(d => d.RoleId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_User_Role");
+        });
+
+        modelBuilder.Entity<VwMember>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("vwMember", "master");
+
+            entity.Property(e => e.Address).HasMaxLength(500);
+            entity.Property(e => e.Birthday).HasColumnType("datetime");
+            entity.Property(e => e.CreatedBy).HasMaxLength(320);
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.DeletedBy).HasMaxLength(320);
+            entity.Property(e => e.DeletedDate).HasColumnType("datetime");
+            entity.Property(e => e.Email).HasMaxLength(320);
+            entity.Property(e => e.Gender).HasMaxLength(100);
             entity.Property(e => e.Name).HasMaxLength(255);
             entity.Property(e => e.PhoneNumber).HasMaxLength(50);
             entity.Property(e => e.Timestamp)

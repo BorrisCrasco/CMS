@@ -1,5 +1,4 @@
-﻿using Cms.Persistence.Models;
-using CMS.Application.Feature.Members.Dtos;
+﻿using CMS.Application.Feature.Members.Dtos;
 using Lipip.Atomic.EntityFramework.Result;
 using MediatR;
 using System;
@@ -10,8 +9,8 @@ using System.Threading.Tasks;
 
 namespace CMS.Application.Feature.Members.Request
 {
-    public class CreateMember : IRequest<IResult<Member>>
+    public class GetGenders : IRequest<IResult<IEnumerable<GenderDto>>>
     {
-        public MemberDto Member {  get; set; }
+        
     }
 }

@@ -2,7 +2,6 @@
 using CMS.Application.Feature.Members.Request;
 using CMS.Application.Feature.Members.Services;
 using Lipip.Atomic.EntityFramework.Result;
-using MapsterMapper;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -12,12 +11,11 @@ using System.Threading.Tasks;
 
 namespace CMS.Application.Feature.Members.Handler
 {
-    public class GetMemberHandler(IMemberServices memberServices) : IRequestHandler<GetMember, IResult<MemberDto>>
+    public class GetGendersHandler(IMemberServices memberServices) : IRequestHandler<GetGenders, IResult<IEnumerable<GenderDto>>>
     {
-        public async Task<IResult<MemberDto>> Handle(GetMember request, CancellationToken cancellationToken)
+        public async Task<IResult<IEnumerable<GenderDto>>> Handle(GetGenders request, CancellationToken cancellationToken)
         {
-            return await memberServices.Get(request.Id, cancellationToken);
-
+            return await memberServices.GetGenders(cancellationToken);
         }
     }
 }

@@ -5,11 +5,17 @@ using System.Collections.Generic;
 
 namespace Cms.Persistence.Models;
 
-public partial class Member
+public partial class VwMember
 {
     public Guid Id { get; set; }
 
     public string Name { get; set; } = null!;
+
+    public int? Age { get; set; }
+
+    public int? GenderId { get; set; }
+
+    public string Gender { get; set; } = null!;
 
     public string? Email { get; set; }
 
@@ -18,10 +24,6 @@ public partial class Member
     public string? Address { get; set; }
 
     public DateTime Birthday { get; set; }
-
-    public bool? IsActive { get; set; }
-
-    public int? GenderId { get; set; }
 
     public string? CreatedBy { get; set; }
 

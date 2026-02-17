@@ -10,10 +10,12 @@ using System.Threading.Tasks;
 
 namespace CMS.Application.Feature.Members.Request
 {
-    public class GetMembers : IRequest<IResult<PagedResult<MemberResultDto>>>
+    public class GetMembers : IRequest<PagedResult<MemberResultDto>>
     {
         public string? Search { get; set; }
-        public int? PageSize { get; set; }
+
         public int? PageNumber { get; set; }
+        public int? PageSize { get; set; }
+
     }
 }

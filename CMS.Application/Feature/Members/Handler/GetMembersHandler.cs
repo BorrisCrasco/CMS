@@ -14,14 +14,12 @@ using System.Threading.Tasks;
 
 namespace CMS.Application.Feature.Members.Handler
 {
-    public class GetMembersHandler(IMemberServices memberServices, IMapper mapper)
-        : IRequestHandler<GetMembers, IResult<PagedResult<MemberResultDto>>>
+    public class GetMembersHandler(IMemberServices memberServices)
+        : IRequestHandler<GetMembers, PagedResult<MemberResultDto>>
     {
-        public async Task<IResult<PagedResult<MemberResultDto>>> Handle(GetMembers request, CancellationToken cancellationToken)
+        public async Task<PagedResult<MemberResultDto>> Handle(GetMembers request, CancellationToken cancellationToken)
         {
-            var query = await memberServices.Gets(request, cancellationToken);
-
-            return Result<PagedResult<MemberResultDto>>.Success(query);
+            return await memberServices.Gets(request, cancellationToken);
             
         }
     }

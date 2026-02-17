@@ -5,23 +5,19 @@ using System.Collections.Generic;
 
 namespace Cms.Persistence.Models;
 
-public partial class Member
+public partial class User
 {
     public Guid Id { get; set; }
 
-    public string Name { get; set; } = null!;
+    public string Username { get; set; } = null!;
 
-    public string? Email { get; set; }
+    public byte[] PasswordHash { get; set; } = null!;
 
-    public string? PhoneNumber { get; set; }
+    public byte[] PasswordSalt { get; set; } = null!;
 
-    public string? Address { get; set; }
-
-    public DateTime Birthday { get; set; }
+    public int RoleId { get; set; }
 
     public bool? IsActive { get; set; }
-
-    public int? GenderId { get; set; }
 
     public string? CreatedBy { get; set; }
 
@@ -38,4 +34,6 @@ public partial class Member
     public bool IsDeleted { get; set; }
 
     public byte[] Timestamp { get; set; } = null!;
+
+    public virtual Role Role { get; set; } = null!;
 }

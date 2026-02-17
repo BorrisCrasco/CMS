@@ -2,6 +2,7 @@
 using CMS.Application.Feature.Members.Dtos;
 using CMS.Application.Feature.Members.Request;
 using Lipip.Atomic.EntityFramework.Core.Paginations;
+using Lipip.Atomic.EntityFramework.Result;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -22,14 +23,14 @@ namespace Cms.WebApi.Controllers.Maintenance.Member
         }
 
         [HttpPost]
-        [ProducesResponseType<MemberDto>(StatusCodes.Status200OK)]
+        [ProducesResponseType<IResult<MemberDto>>(StatusCodes.Status200OK)]
         public async Task<IActionResult> Create([FromBody] CreateMember command)
         {
             return Ok(await mediator.Send(command));
         }
 
         [HttpGet("{id}")]
-        [ProducesResponseType<MemberDto>(StatusCodes.Status200OK)]
+        [ProducesResponseType<IResult<MemberDto>>(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Get([FromRoute] Guid id )
         {
@@ -40,5 +41,47 @@ namespace Cms.WebApi.Controllers.Maintenance.Member
 
             return Ok(await mediator.Send(query));
         }
+
+        [HttpPut("{id}")]
+        [ProducesResponseType<IResult<MemberDto>>(StatusCodes.Status200OK)]
+        public async Task<IActionResult> Update([FromRoute]Guid id,[FromBody] UpdateMember command)
+        {
+            command.Member.Id = id;
+            return Ok(await mediator.Send(command));
+        }
+
+        [HttpPatch("{id}/deactivate")]
+        [ProducesResponseType<Guid>(StatusCodes.Status200OK)]
+        public async Task<IActionResult> Deactivate([FromRoute]Guid id)
+        {
+            var command = new DeactivateMember
+            {
+                Id = id
+            };
+            return Ok(await mediator.Send(command));
+        }
+
+        [HttpPatch("{id}/reactivate")]
+        [ProducesResponseType<Guid>(StatusCodes.Status200OK)]
+        public async Task<IActionResult> Reactivate([FromRoute] Guid id)
+        {
+            var command = new ReactivateMember
+            {
+                Id = id
+            };
+            return Ok(await mediator.Send(command));
+        }
+
+
+        [HttpGet("genders")]
+        [ProducesResponseType<IResult<IEnumerable<GenderDto>>>(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetGenders([FromQuery] GetGenders query )
+        {
+
+            return Ok(await mediator.Send(query));
+        }
+
+
     }
 }

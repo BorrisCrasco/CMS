@@ -10,10 +10,10 @@ namespace CMS.Application.Feature.Members.Services
     public interface IMemberStore
     {
         Task Create(Member member, CancellationToken cancellation = default);
-        Task<IEnumerable<Member>> Gets(CancellationToken cancellation = default);
-        IQueryable<Member> Query();
-
-        Task<Member?> Get(Guid id, CancellationToken cancellation = default);
+        Task<IEnumerable<VwMember>> Gets(CancellationToken cancellation = default);
+        IQueryable<VwMember> Query();
+        Task<VwMember?> Get(Guid id, CancellationToken cancellation = default);
         Task<Member?> GetForUpdate(Guid id, CancellationToken cancellation = default);
+        Task<IEnumerable<Gender>> GetGenders(CancellationToken cancellation = default);
     }
 }
