@@ -5,13 +5,19 @@ using System.Collections.Generic;
 
 namespace Cms.Persistence.Models;
 
-public partial class Role
+public partial class VwUser
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
 
-    public string Name { get; set; } = null!;
+    public string Username { get; set; } = null!;
 
-    public bool? IsActive { get; set; }
+    public int RoleId { get; set; }
+
+    public string RoleName { get; set; } = null!;
+
+    public byte[] PasswordHash { get; set; } = null!;
+
+    public byte[] PasswordSalt { get; set; } = null!;
 
     public string? CreatedBy { get; set; }
 
@@ -28,8 +34,4 @@ public partial class Role
     public bool IsDeleted { get; set; }
 
     public byte[] Timestamp { get; set; } = null!;
-
-    public virtual ICollection<RoleModule> RoleModules { get; set; } = new List<RoleModule>();
-
-    public virtual ICollection<User> Users { get; set; } = new List<User>();
 }

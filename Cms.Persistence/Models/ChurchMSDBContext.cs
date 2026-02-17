@@ -31,6 +31,8 @@ public partial class ChurchMSDBContext : DbContext
 
     public virtual DbSet<VwMember> VwMembers { get; set; }
 
+    public virtual DbSet<VwUser> VwUsers { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Event>(entity =>
@@ -197,6 +199,24 @@ public partial class ChurchMSDBContext : DbContext
                 .IsConcurrencyToken();
             entity.Property(e => e.UpdatedBy).HasMaxLength(320);
             entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
+        });
+
+        modelBuilder.Entity<VwUser>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("vwUser", "auth");
+
+            entity.Property(e => e.CreatedBy).HasMaxLength(150);
+            entity.Property(e => e.DeletedBy).HasMaxLength(150);
+            entity.Property(e => e.PasswordHash).HasMaxLength(256);
+            entity.Property(e => e.PasswordSalt).HasMaxLength(128);
+            entity.Property(e => e.RoleName).HasMaxLength(150);
+            entity.Property(e => e.Timestamp)
+                .IsRowVersion()
+                .IsConcurrencyToken();
+            entity.Property(e => e.UpdatedBy).HasMaxLength(150);
+            entity.Property(e => e.Username).HasMaxLength(150);
         });
 
         OnModelCreatingPartial(modelBuilder);

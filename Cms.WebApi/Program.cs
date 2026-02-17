@@ -1,7 +1,7 @@
 using Cms.Persistence.Models;
 using Cms.WebApi.Configuration;
 using CMS.Application;
-using CMS.Application.Feature.Events.Handler;
+using CMS.Application.Feature.Masterlists.Events.Handler;
 using Lipip.Atomic.EntityFramework.Behaviors;
 using MediatR;
 using System;

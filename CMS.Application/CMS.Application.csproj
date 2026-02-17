@@ -11,10 +11,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Feature\Events\Mapping\" />
-    <Folder Include="Feature\Events\Validation\" />
-    <Folder Include="Feature\Members\Mapping\" />
-    <Folder Include="Feature\Members\Validation\" />
+    <Folder Include="Common\" />
+    <Folder Include="Feature\Authentications\Roles\Validation\" />
+    <Folder Include="Feature\Authentications\Users\Validation\" />
+    <Folder Include="Feature\Masterlists\Events\Mapping\" />
+    <Folder Include="Feature\Masterlists\Events\Validation\" />
+    <Folder Include="Feature\Masterlists\Members\Mapping\" />
+    <Folder Include="Feature\Masterlists\Members\Validation\" />
   </ItemGroup>
 
 </Project>
