@@ -19,6 +19,8 @@ public partial class VwUser
 
     public byte[] PasswordSalt { get; set; } = null!;
 
+    public bool? IsActive { get; set; }
+
     public string? CreatedBy { get; set; }
 
     public DateTime CreatedDate { get; set; }

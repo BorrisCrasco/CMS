@@ -1,6 +1,7 @@
 ﻿using Azure;
 using Azure.Core;
 using Lipip.Atomic.EntityFramework.Behaviors;
+using Lipip.Atomic.EntityFramework.Common.Authentications;
 using Lipip.Atomic.EntityFramework.Core.Atomics;
 using MapsterMapper;
 using MediatR;
@@ -25,11 +26,13 @@ public static class ServiceCollectionExtensions
         });
 
 
+
         services.AddScoped<AtomicDbContextProxy<TContext>>();
         services.AddScoped<IAtomicUnitOfWork, AtomicUnitOfWork<TContext>>();
         services.AddScoped<DbContext>(sp => sp.GetRequiredService<TContext>());
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(AtomicTransactionBehavior<,>));
         services.AddScoped<IMapper, Mapper>();
+        services.AddScoped<IJwtTokenService,JwtTokenService>();
 
 
         //var assemblies = AppDomain.CurrentDomain.GetAssemblies()

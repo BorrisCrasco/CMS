@@ -3,6 +3,8 @@ using CMS.Application.Common.Authentications;
 using CMS.Application.Feature.Authentications.Roles.Services;
 using CMS.Application.Feature.Authentications.Users.Dtos;
 using CMS.Application.Feature.Authentications.Users.Request;
+using Lipip.Atomic.EntityFramework.Common.Authentications;
+using Lipip.Atomic.EntityFramework.Common.Dtos;
 using Lipip.Atomic.EntityFramework.Core.Paginations;
 using Lipip.Atomic.EntityFramework.Result;
 using MapsterMapper;
@@ -10,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CMS.Application.Feature.Authentications.Users.Services
 {
-    public class UserServices(IUserStore userStore, IMapper mapper, IRoleServices roleServices) : IUserServices
+    public class UserServices(IUserStore userStore, IMapper mapper, IRoleServices roleServices , IJwtTokenService jwtToken) : IUserServices
     {
         public async Task<IResult<UserDto>> Create(UserDto request, CancellationToken cancellationToken = default)
         {
@@ -111,5 +113,59 @@ namespace CMS.Application.Feature.Authentications.Users.Services
 
             return Result.Success(request);
         }
+
+        public async Task<IResult<UserAuthenticationDto>> Login(LoginUser request, CancellationToken cancellationToken = default)
+        {
+            var model = await GetByUsername(request.Username, cancellationToken);
+
+            if (model is null)
+                return Result<UserAuthenticationDto>.Unauthorized("Invalid username and password!");
+
+            var valid = PasswordHasher.VerifyPassword
+             (
+                request.Password!,
+                model.PasswordHash,
+                model.PasswordSalt
+             );
+
+            if (!valid)
+                return Result<UserAuthenticationDto>.Unauthorized("Invalid username or password!");
+
+            var role = model.RoleName;
+
+            var token = new UserTokenDto
+            {
+                Id = model.Id,
+                Username = model.Username,
+                Role = role,
+            };
+
+            var generateToken = jwtToken.GenerateToken(token);
+
+            return Result.Success(new UserAuthenticationDto
+            {
+                Id = model.Id,
+                Username = model.Username,
+                RoleId = model.RoleId,
+                RoleName = role,
+                Token = generateToken
+            });
+
+
+        }
+
+
+        public async Task<VwUser?> GetByUsername(string username, CancellationToken cancellationToken = default)
+        {
+            var model = await userStore.Gets();
+
+            var validate = model
+                .Where(x => x.Username == username && x.IsActive == true)
+                .SingleOrDefault() ?? null;
+
+            return validate;
+        }
+
+
     }
 }

@@ -27,5 +27,10 @@ namespace CMS.Application.Feature.Authentications.Users.Services
 
         Task<IResult<Guid>> Deactivate(Guid id, CancellationToken cancellationToken = default);
 
+        Task<IResult<UserAuthenticationDto>> Login(LoginUser request, CancellationToken cancellationToken = default);
+
+        Task<VwUser?> GetByUsername(string username, CancellationToken cancellationToken = default);
+
+
     }
 }

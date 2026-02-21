@@ -5,6 +5,7 @@ using CMS.Application.Feature.Authentications.Users.Request;
 using Lipip.Atomic.EntityFramework.Core.Paginations;
 using Lipip.Atomic.EntityFramework.Result;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,6 +15,16 @@ namespace Cms.WebApi.Controllers.Authentications.Users
     [ApiController]
     public class UserController(IMediator mediator) : ControllerBase
     {
+        [AllowAnonymous]
+        [HttpPost("login")]
+        [ProducesResponseType<IResult<UserAuthenticationDto>>(StatusCodes.Status200OK)]
+        public async Task<IActionResult> Login([FromBody] LoginUser command)
+        {
+            return Ok(await mediator.Send(command));
+        }
+
+
+
         [HttpGet]
         [ProducesResponseType(typeof(PagedResult<UserResultDto>), StatusCodes.Status200OK)]
         public async Task<IActionResult> Search([FromQuery] GetUsersQuery query)
