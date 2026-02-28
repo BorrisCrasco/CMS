@@ -1,5 +1,5 @@
 ﻿using CMS.Application.Feature.Masterlists.Events.Dtos;
-using Lipip.Atomic.EntityFramework.Core.Paginations;
+using Lipip.Atomic.EntityFramework.Common.Paginations;
 using Lipip.Atomic.EntityFramework.Result;
 using MediatR;
 using System;

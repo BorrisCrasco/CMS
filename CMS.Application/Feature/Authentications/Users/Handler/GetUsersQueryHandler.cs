@@ -2,7 +2,7 @@
 using CMS.Application.Feature.Authentications.Users.Dtos;
 using CMS.Application.Feature.Authentications.Users.Request;
 using CMS.Application.Feature.Authentications.Users.Services;
-using Lipip.Atomic.EntityFramework.Core.Paginations;
+using Lipip.Atomic.EntityFramework.Common.Paginations;
 using Lipip.Atomic.EntityFramework.Result;
 using MediatR;
 using System;

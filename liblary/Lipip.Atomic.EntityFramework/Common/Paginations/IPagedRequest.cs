@@ -1,4 +1,4 @@
-﻿namespace Lipip.Atomic.EntityFramework.Core.Paginations
+﻿namespace Lipip.Atomic.EntityFramework.Common.Paginations
 {
     public interface IPagedRequest
     {

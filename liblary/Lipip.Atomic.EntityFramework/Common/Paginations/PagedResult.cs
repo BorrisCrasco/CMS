@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Lipip.Atomic.EntityFramework.Core.Paginations
+namespace Lipip.Atomic.EntityFramework.Common.Paginations
 {
     public sealed class PagedResult<T>
     {

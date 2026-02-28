@@ -1,62 +1,76 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Lipip.Atomic.EntityFramework.Common.Authentications;
+﻿using Lipip.Atomic.EntityFramework.Common.Authentications;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Lipip.Atomic.EntityFramework.Core.Atomics
+namespace Lipip.Atomic.EntityFramework.Behaviors.Atomics
 {
-    public class AtomicDbContextProxy<TContext> where TContext : DbContext
+    public class AtomicTransactionBehavior
+        <TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+    where TRequest : IRequest<TResponse>
     {
-        private readonly TContext _inner;
         private readonly ICurrentUser _currentUser;
+        private readonly DbContext _context;
+        private readonly ILogger<AtomicTransactionBehavior<TRequest, TResponse>> _logger;
 
-        public AtomicDbContextProxy(TContext inner, ICurrentUser currentUser)
+        public AtomicTransactionBehavior(DbContext context, ILogger<AtomicTransactionBehavior<TRequest, TResponse>> logger, ICurrentUser currentUser)
         {
-            _inner = inner;
+            _context = context;
+            _logger = logger;
             _currentUser = currentUser;
         }
 
-        public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
         {
-            ApplyAutomaticAudit();
 
-            if (_inner.Database.CurrentTransaction == null)
+
+            if (_context.Database.CurrentTransaction != null)
             {
-                await using var transaction = await _inner.Database.BeginTransactionAsync(cancellationToken);
-                try
-                {
-                    var result = await _inner.SaveChangesAsync(cancellationToken);
-                    await transaction.CommitAsync();
-                    return result;
-                }
-                catch
-                {
-                    await transaction.RollbackAsync();
-                    throw;
-                }
+                return await next();
             }
 
-            return await _inner.SaveChangesAsync(cancellationToken);
+            await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
+            try
+            {
+                var response = await next();
+
+                if (response is Result.IResult result && !result.IsSuccess)
+                {
+                    await transaction.RollbackAsync(cancellationToken);
+                    return response;
+                }
+
+                ApplyAutomaticAudit();
+
+                await _context.SaveChangesAsync(cancellationToken);
+                await transaction.CommitAsync(cancellationToken);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync(cancellationToken);
+                _logger.LogError(ex, "Transaction failed for {Request}", typeof(TRequest).Name);
+                throw;
+            }
         }
-
-        public DbSet<TEntity> Set<TEntity>() where TEntity : class => _inner.Set<TEntity>();
-
-        public TContext Db => _inner;
 
         private void ApplyAutomaticAudit()
         {
-            var entries = _inner.ChangeTracker
+            var entries = _context.ChangeTracker
                 .Entries()
                 .Where(e => e.State == EntityState.Added ||
                             e.State == EntityState.Modified ||
                             e.State == EntityState.Deleted);
 
             var now = DateTime.UtcNow;
-            var user = _currentUser.UserId ?? "SYSTEM";
+            var user = _currentUser.Username ?? "SYSTEM";
 
             foreach (var entry in entries)
             {
@@ -94,11 +108,4 @@ namespace Lipip.Atomic.EntityFramework.Core.Atomics
             }
         }
     }
-
-
-
-
-
 }
-
-

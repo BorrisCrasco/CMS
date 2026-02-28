@@ -3,7 +3,7 @@ using CMS.Application.Feature.Authentications.Roles.Dtos;
 using CMS.Application.Feature.Authentications.Roles.Request;
 using CMS.Application.Feature.Masterlists.Members.Dtos;
 using CMS.Application.Feature.Masterlists.Members.Services;
-using Lipip.Atomic.EntityFramework.Core.Paginations;
+using Lipip.Atomic.EntityFramework.Common.Paginations;
 using Lipip.Atomic.EntityFramework.Result;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +20,7 @@ namespace CMS.Application.Feature.Authentications.Roles.Services
         public async Task<IResult<RoleDto>> Create(RoleDto request, CancellationToken cancellationToken = default)
         {
             var create = mapper.Map<Role>(request);
-            create.CreatedDate = DateTime.Now;
+            //create.CreatedDate = DateTime.Now;
 
             await roleStore.Create(create, cancellationToken);
 

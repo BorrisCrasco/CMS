@@ -1,7 +1,7 @@
 ﻿using Cms.Persistence.Models;
 using CMS.Application.Feature.Masterlists.Events.Dtos;
 using CMS.Application.Feature.Masterlists.Events.Request;
-using Lipip.Atomic.EntityFramework.Core.Paginations;
+using Lipip.Atomic.EntityFramework.Common.Paginations;
 using Lipip.Atomic.EntityFramework.Result;
 using Mapster;
 using MapsterMapper;

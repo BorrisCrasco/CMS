@@ -1,7 +1,7 @@
 ﻿using Cms.Persistence.Models;
 using CMS.Application.Feature.Masterlists.Members.Dtos;
 using CMS.Application.Feature.Masterlists.Members.Request;
-using Lipip.Atomic.EntityFramework.Core.Paginations;
+using Lipip.Atomic.EntityFramework.Common.Paginations;
 using Lipip.Atomic.EntityFramework.Result;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
@@ -26,7 +26,6 @@ namespace CMS.Application.Feature.Masterlists.Members.Services
 
             var create = mapper.Map<Member>(member);
             create.Id = Guid.NewGuid();
-            create.CreatedDate = DateTime.Now;
 
             await memberStore.Create(create,cancellationToken);
 
@@ -86,11 +85,11 @@ namespace CMS.Application.Feature.Masterlists.Members.Services
                 return Result<Member>.NotFound("Id not found!");
 
             var dto = mapper.Map(member, model);
-            dto.UpdatedDate = DateTime.Now;
 
             return Result.Success(dto);
 
         }
+
         public async Task<IResult<Guid>> DeactivateMember(Guid id, CancellationToken cancellationToken = default)
         {
             var model = await memberStore.GetForUpdate(id, cancellationToken);

@@ -1,7 +1,7 @@
 ﻿using CMS.Application.Feature.Masterlists.Members.Dtos;
 using CMS.Application.Feature.Masterlists.Members.Request;
 using CMS.Application.Feature.Masterlists.Members.Services;
-using Lipip.Atomic.EntityFramework.Core.Paginations;
+using Lipip.Atomic.EntityFramework.Common.Paginations;
 using Lipip.Atomic.EntityFramework.Result;
 using MapsterMapper;
 using MediatR;

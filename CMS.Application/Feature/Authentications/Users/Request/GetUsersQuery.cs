@@ -1,5 +1,5 @@
 ﻿using CMS.Application.Feature.Authentications.Users.Dtos;
-using Lipip.Atomic.EntityFramework.Core.Paginations;
+using Lipip.Atomic.EntityFramework.Common.Paginations;
 using MediatR;
 using System;
 using System.Collections.Generic;

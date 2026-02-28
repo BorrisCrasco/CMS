@@ -5,7 +5,7 @@ using CMS.Application.Feature.Authentications.Users.Dtos;
 using CMS.Application.Feature.Authentications.Users.Request;
 using Lipip.Atomic.EntityFramework.Common.Authentications;
 using Lipip.Atomic.EntityFramework.Common.Dtos;
-using Lipip.Atomic.EntityFramework.Core.Paginations;
+using Lipip.Atomic.EntityFramework.Common.Paginations;
 using Lipip.Atomic.EntityFramework.Result;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
@@ -30,7 +30,6 @@ namespace CMS.Application.Feature.Authentications.Users.Services
             create.Id = Guid.NewGuid();
             create.PasswordHash = passwordHash;
             create.PasswordSalt = passwordSalt;
-            create.CreatedDate = DateTime.UtcNow;
 
             await userStore.Create(create, cancellationToken);
 
@@ -109,7 +108,6 @@ namespace CMS.Application.Feature.Authentications.Users.Services
                 return Result<UserDto>.NotFound("Id not found!");
 
             var dto = mapper.Map(request, model);
-            dto.UpdatedDate = DateTime.Now;
 
             return Result.Success(request);
         }

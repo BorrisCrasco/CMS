@@ -1,6 +1,6 @@
 ﻿using CMS.Application.Feature.Masterlists.Members.Dtos;
 using CMS.Application.Feature.Masterlists.Members.Request;
-using Lipip.Atomic.EntityFramework.Core.Paginations;
+using Lipip.Atomic.EntityFramework.Common.Paginations;
 using Lipip.Atomic.EntityFramework.Result;
 using MediatR;
 using Microsoft.AspNetCore.Http;

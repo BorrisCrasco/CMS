@@ -49,7 +49,10 @@ if (corsConfiguration.CorsEnabled)
         options.AddPolicy(corsConfiguration.PolicyName,
             policy =>
             {
-                policy.WithOrigins(corsConfiguration.AllowedOrigins).AllowAnyHeader().AllowAnyMethod().WithExposedHeaders("Etag", "Cache-Control");
+                policy.WithOrigins(corsConfiguration.AllowedOrigins)
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .WithExposedHeaders("Etag", "Cache-Control");
             });
     });
 }

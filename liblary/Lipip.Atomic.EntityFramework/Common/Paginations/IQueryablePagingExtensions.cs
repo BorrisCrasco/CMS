@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Lipip.Atomic.EntityFramework.Core.Paginations
+namespace Lipip.Atomic.EntityFramework.Common.Paginations
 {
     public static class IQueryablePagingExtensions
     {
