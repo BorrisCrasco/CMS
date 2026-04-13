@@ -1,4 +1,4 @@
-﻿using Lipip.Atomic.EntityFramework.Common.Dtos;
+﻿using Lipip.Atomic.EntityFramework.Infrastructure.Dtos;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -9,7 +9,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Lipip.Atomic.EntityFramework.Common.Authentications
+namespace Lipip.Atomic.EntityFramework.Infrastructure
 {
     public class JwtTokenService : IJwtTokenService
     {

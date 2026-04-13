@@ -7,8 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Lipip.Atomic.EntityFramework.Core.Atomics
+namespace Lipip.Atomic.EntityFramework.Deprecated.Atomics
 {
+    [Obsolete]
     public class AtomicDbContextProxy<TContext> where TContext : DbContext
     {
         private readonly TContext _inner;

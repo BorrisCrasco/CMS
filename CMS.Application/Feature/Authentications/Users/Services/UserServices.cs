@@ -1,13 +1,14 @@
 ﻿using Cms.Persistence.Models;
-using CMS.Application.Common.Authentications;
+using CMS.Application.Feature.Authentications.Roles.Dtos;
 using CMS.Application.Feature.Authentications.Roles.Services;
 using CMS.Application.Feature.Authentications.Users.Dtos;
 using CMS.Application.Feature.Authentications.Users.Request;
-using Lipip.Atomic.EntityFramework.Common.Authentications;
-using Lipip.Atomic.EntityFramework.Common.Dtos;
 using Lipip.Atomic.EntityFramework.Common.Paginations;
+using Lipip.Atomic.EntityFramework.Infrastructure;
+using Lipip.Atomic.EntityFramework.Infrastructure.Dtos;
 using Lipip.Atomic.EntityFramework.Result;
 using MapsterMapper;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace CMS.Application.Feature.Authentications.Users.Services
@@ -17,7 +18,6 @@ namespace CMS.Application.Feature.Authentications.Users.Services
         public async Task<IResult<UserDto>> Create(UserDto request, CancellationToken cancellationToken = default)
         {
             var roleExist = await roleServices.RoleExist(request.RoleId, cancellationToken);
-
             if (!roleExist)
                 return Result<UserDto>.NotFound("Role id not found!");
 
@@ -30,8 +30,11 @@ namespace CMS.Application.Feature.Authentications.Users.Services
             create.Id = Guid.NewGuid();
             create.PasswordHash = passwordHash;
             create.PasswordSalt = passwordSalt;
+            create.IsActive = true;
 
             await userStore.Create(create, cancellationToken);
+
+            var result = mapper.Map<UserDto>(create);
 
             return Result.Success(request);
         }
@@ -53,9 +56,9 @@ namespace CMS.Application.Feature.Authentications.Users.Services
             if (model is null)
                 return Result<UserDto>.NotFound("Id not found!");
 
-            var dto = mapper.Map<UserDto>(model);
+            var result = mapper.Map<UserDto>(model);
 
-            return Result.Success(dto);
+            return Result.Success(result);
         }
 
         public async Task<PagedResult<UserResultDto>> GetPaged(GetUsersQuery request, CancellationToken cancellationToken = default)
@@ -109,7 +112,9 @@ namespace CMS.Application.Feature.Authentications.Users.Services
 
             var dto = mapper.Map(request, model);
 
-            return Result.Success(request);
+            var result = mapper.Map<UserDto>(model);
+
+            return Result.Success(result);
         }
 
         public async Task<IResult<UserAuthenticationDto>> Login(LoginUser request, CancellationToken cancellationToken = default)
@@ -129,13 +134,11 @@ namespace CMS.Application.Feature.Authentications.Users.Services
             if (!valid)
                 return Result<UserAuthenticationDto>.Unauthorized("Invalid username or password!");
 
-            var role = model.RoleName;
-
             var token = new UserTokenDto
             {
                 Id = model.Id,
                 Username = model.Username,
-                Role = role,
+                Role = model.RoleName,
             };
 
             var generateToken = jwtToken.GenerateToken(token);
@@ -145,7 +148,7 @@ namespace CMS.Application.Feature.Authentications.Users.Services
                 Id = model.Id,
                 Username = model.Username,
                 RoleId = model.RoleId,
-                RoleName = role,
+                RoleName = model.RoleName,
                 Token = generateToken
             });
 

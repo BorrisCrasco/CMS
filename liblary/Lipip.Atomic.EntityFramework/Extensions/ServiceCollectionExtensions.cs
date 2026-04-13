@@ -3,8 +3,10 @@ using Azure.Core;
 using FluentValidation;
 using Lipip.Atomic.EntityFramework.Behaviors.Atomics;
 using Lipip.Atomic.EntityFramework.Behaviors.Validations;
+using Lipip.Atomic.EntityFramework.Common.Audit;
 using Lipip.Atomic.EntityFramework.Common.Authentications;
-using Lipip.Atomic.EntityFramework.Core.Atomics;
+using Lipip.Atomic.EntityFramework.Deprecated.Atomics;
+using Lipip.Atomic.EntityFramework.Infrastructure;
 using MapsterMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -27,8 +29,6 @@ public static class ServiceCollectionExtensions
             options.UseSqlServer(connectionString);
         });
 
-        services.AddScoped<AtomicDbContextProxy<TContext>>();
-        services.AddScoped<IAtomicUnitOfWork, AtomicUnitOfWork<TContext>>();
         services.AddScoped<DbContext>(sp => sp.GetRequiredService<TContext>());
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(AtomicTransactionBehavior<,>));
         services.AddScoped<IMapper, Mapper>();
@@ -36,8 +36,8 @@ public static class ServiceCollectionExtensions
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         services.AddScoped<IJwtTokenService,JwtTokenService>();
         services.AddHttpContextAccessor();
+        services.AddScoped<IAuditService, AuditService>();
         services.AddScoped<ICurrentUser, CurrentUser>();
-
 
         //var assemblies = AppDomain.CurrentDomain.GetAssemblies()
         //    .Where(a =>
@@ -47,8 +47,6 @@ public static class ServiceCollectionExtensions
         //    .ToArray();
 
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(applicationAssemblies));
-
-
         return services;
     }
 

@@ -5,8 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Lipip.Atomic.EntityFramework.Core.Atomics
+namespace Lipip.Atomic.EntityFramework.Deprecated.Atomics
 {
+    [Obsolete]
     public class AtomicUnitOfWork<TContext> : IAtomicUnitOfWork where TContext : DbContext
     {
         private readonly AtomicDbContextProxy<TContext> _proxy;
@@ -17,6 +18,9 @@ namespace Lipip.Atomic.EntityFramework.Core.Atomics
         }
 
         public Task CommitAsync() => _proxy.SaveChangesAsync();
+
+        //TODO : Refactor
+
     }
 
 }

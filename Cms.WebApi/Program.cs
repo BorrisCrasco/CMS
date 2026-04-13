@@ -1,6 +1,6 @@
 using Cms.Persistence.Models;
 using Cms.WebApi.Configuration;
-using CMS.Application;
+using CMS.Application.Application;
 using CMS.Application.Feature.Masterlists.Events.Handler;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;

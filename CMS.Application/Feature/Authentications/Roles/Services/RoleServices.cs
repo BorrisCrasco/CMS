@@ -5,6 +5,7 @@ using CMS.Application.Feature.Masterlists.Members.Dtos;
 using CMS.Application.Feature.Masterlists.Members.Services;
 using Lipip.Atomic.EntityFramework.Common.Paginations;
 using Lipip.Atomic.EntityFramework.Result;
+using Mapster;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -20,11 +21,13 @@ namespace CMS.Application.Feature.Authentications.Roles.Services
         public async Task<IResult<RoleDto>> Create(RoleDto request, CancellationToken cancellationToken = default)
         {
             var create = mapper.Map<Role>(request);
-            //create.CreatedDate = DateTime.Now;
+            create.IsActive = true;
 
             await roleStore.Create(create, cancellationToken);
 
-            return Result.Success(request);
+            var result = mapper.Map<RoleDto>(create);
+
+            return Result.Success(result);
         }
 
         public async Task<IResult<int>> Deactivate(int id, CancellationToken cancellationToken = default)
@@ -41,12 +44,13 @@ namespace CMS.Application.Feature.Authentications.Roles.Services
         public async Task<IResult<RoleDto>> Get(int Id, CancellationToken cancellationToken = default)
         {
             var model = await roleStore.Get(Id, cancellationToken);
+
             if (model is null)
                 return Result<RoleDto>.NotFound("Id not found!");
 
-            var dto = mapper.Map<RoleDto>(model);
+            var result = mapper.Map<RoleDto>(model);
 
-            return Result.Success(dto);
+            return Result.Success(result);
         }
 
         public async Task<PagedResult<RoleResultDto>> GetPaged(GetRolesQuery request, CancellationToken cancellationToken = default)
@@ -96,7 +100,9 @@ namespace CMS.Application.Feature.Authentications.Roles.Services
             var dto = mapper.Map(request, model);
             dto.UpdatedDate = DateTime.Now;
 
-            return Result.Success(request);
+            var result = mapper.Map<RoleDto>(model);
+
+            return Result.Success(result);
         }
 
         public async Task<bool> RoleExist(int id, CancellationToken cancellationToken)

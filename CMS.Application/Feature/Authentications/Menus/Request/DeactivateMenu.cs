@@ -6,10 +6,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CMS.Application.Feature.Authentications.Roles.Request
+namespace CMS.Application.Feature.Authentications.Menus.Request
 {
-    public class DeactivateRole : IRequest<IResult<int>>
+    public class DeactivateMenu : IRequest<IResult<Guid>>
     {
-        public int Id { get; set; } 
+        public Guid Id { get; set; }
     }
 }

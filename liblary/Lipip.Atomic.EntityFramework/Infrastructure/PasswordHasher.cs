@@ -5,7 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CMS.Application.Common.Authentications
+namespace Lipip.Atomic.EntityFramework.Infrastructure
 {
     public static class PasswordHasher
     {

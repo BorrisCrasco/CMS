@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Lipip.Atomic.EntityFramework.Core.Atomics
+namespace CMS.Application.Feature.Authentications.Modules.Request
 {
-    public interface IAtomicUnitOfWork
+    public class GetModuleQuery
     {
-        Task CommitAsync();
     }
 }

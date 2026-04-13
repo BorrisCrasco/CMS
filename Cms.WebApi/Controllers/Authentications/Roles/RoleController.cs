@@ -51,7 +51,7 @@ namespace Cms.WebApi.Controllers.Authentications.Roles
         [ProducesResponseType<int>(StatusCodes.Status200OK)]
         public async Task<IActionResult> Deactivate([FromRoute] int id)
         {
-            var command = new DeactivateRole
+            var command = new DeactivateMenu
             {
                 Id = id
             };

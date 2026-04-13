@@ -11,7 +11,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Common\" />
+    <Folder Include="Feature\Authentications\Menus\Validation\" />
+    <Folder Include="Feature\Authentications\Modules\Handler\" />
+    <Folder Include="Feature\Authentications\Modules\Validation\" />
     <Folder Include="Feature\Authentications\Roles\Validation\" />
     <Folder Include="Feature\Masterlists\Events\Mapping\" />
     <Folder Include="Feature\Masterlists\Events\Validation\" />

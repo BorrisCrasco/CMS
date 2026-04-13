@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
-namespace CMS.Application;
+namespace CMS.Application.Application;
 
 public static class CmsApplication
 {

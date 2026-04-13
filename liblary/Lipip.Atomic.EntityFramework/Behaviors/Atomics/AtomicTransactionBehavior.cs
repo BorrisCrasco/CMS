@@ -1,4 +1,5 @@
-﻿using Lipip.Atomic.EntityFramework.Common.Authentications;
+﻿using Lipip.Atomic.EntityFramework.Common.Audit;
+using Lipip.Atomic.EntityFramework.Common.Authentications;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -12,19 +13,18 @@ using System.Threading.Tasks;
 
 namespace Lipip.Atomic.EntityFramework.Behaviors.Atomics
 {
-    public class AtomicTransactionBehavior
-        <TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+    public class AtomicTransactionBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
     {
-        private readonly ICurrentUser _currentUser;
+        private readonly IAuditService _auditServices;
         private readonly DbContext _context;
         private readonly ILogger<AtomicTransactionBehavior<TRequest, TResponse>> _logger;
 
-        public AtomicTransactionBehavior(DbContext context, ILogger<AtomicTransactionBehavior<TRequest, TResponse>> logger, ICurrentUser currentUser)
+        public AtomicTransactionBehavior(DbContext context, ILogger<AtomicTransactionBehavior<TRequest, TResponse>> logger, IAuditService auditServices)
         {
             _context = context;
             _logger = logger;
-            _currentUser = currentUser;
+            _auditServices = auditServices;
         }
 
         public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
@@ -47,7 +47,7 @@ namespace Lipip.Atomic.EntityFramework.Behaviors.Atomics
                     return response;
                 }
 
-                ApplyAutomaticAudit();
+                _auditServices.ApplyAudit(_context);
 
                 await _context.SaveChangesAsync(cancellationToken);
                 await transaction.CommitAsync(cancellationToken);
@@ -61,51 +61,5 @@ namespace Lipip.Atomic.EntityFramework.Behaviors.Atomics
             }
         }
 
-        private void ApplyAutomaticAudit()
-        {
-            var entries = _context.ChangeTracker
-                .Entries()
-                .Where(e => e.State == EntityState.Added ||
-                            e.State == EntityState.Modified ||
-                            e.State == EntityState.Deleted);
-
-            var now = DateTime.UtcNow;
-            var user = _currentUser.Username ?? "SYSTEM";
-
-            foreach (var entry in entries)
-            {
-                var entity = entry.Entity;
-                var type = entity.GetType();
-
-                var createdDateProp = type.GetProperty("CreatedDate");
-                var createdByProp = type.GetProperty("CreatedBy");
-                var updatedDateProp = type.GetProperty("UpdatedDate");
-                var updatedByProp = type.GetProperty("UpdatedBy");
-                var isDeletedProp = type.GetProperty("IsDeleted");
-                var deletedDateProp = type.GetProperty("DeletedDate");
-                var deletedByProp = type.GetProperty("DeletedBy");
-
-                if (entry.State == EntityState.Added)
-                {
-                    createdDateProp?.SetValue(entity, now);
-                    createdByProp?.SetValue(entity, user);
-                }
-
-                if (entry.State == EntityState.Modified)
-                {
-                    updatedDateProp?.SetValue(entity, now);
-                    updatedByProp?.SetValue(entity, user);
-                }
-
-                if (entry.State == EntityState.Deleted && isDeletedProp != null)
-                {
-                    entry.State = EntityState.Modified;
-
-                    isDeletedProp.SetValue(entity, true);
-                    deletedDateProp?.SetValue(entity, now);
-                    deletedByProp?.SetValue(entity, user);
-                }
-            }
-        }
     }
 }
