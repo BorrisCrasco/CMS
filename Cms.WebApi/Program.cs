@@ -2,6 +2,7 @@ using Cms.Persistence.Models;
 using Cms.WebApi.Configuration;
 using CMS.Application.Application;
 using CMS.Application.Feature.Masterlists.Events.Handler;
+using Lipip.Atomic.EntityFramework.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -41,7 +42,11 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-var corsConfiguration = builder.Configuration.GetSection(nameof(CorsConfiguration)).Get<CorsConfiguration>();
+var corsConfiguration = builder.Configuration
+    .GetSection(nameof(CorsConfiguration))
+    .Get<CorsConfiguration>()
+   ?? throw new InvalidOperationException("CorsConfiguration section is missing or invalid.");
+
 if (corsConfiguration.CorsEnabled)
 {
     builder.Services.AddCors(options =>
@@ -99,6 +104,8 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 var app = builder.Build();
+
+app.UseAtomicExceptionMiddleware();
 
 if (app.Environment.IsDevelopment())
 {

@@ -1,42 +1,39 @@
 ﻿using Lipip.Atomic.EntityFramework.Common.Audit;
-using Lipip.Atomic.EntityFramework.Common.Authentications;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Lipip.Atomic.EntityFramework.Behaviors.Atomics
 {
     public class AtomicTransactionBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : IRequest<TResponse>
+        where TRequest : IRequest<TResponse>
     {
-        private readonly IAuditService _auditServices;
+        private readonly IAuditService _auditService;
         private readonly DbContext _context;
         private readonly ILogger<AtomicTransactionBehavior<TRequest, TResponse>> _logger;
 
-        public AtomicTransactionBehavior(DbContext context, ILogger<AtomicTransactionBehavior<TRequest, TResponse>> logger, IAuditService auditServices)
+        public AtomicTransactionBehavior(
+            DbContext context,
+            ILogger<AtomicTransactionBehavior<TRequest, TResponse>> logger,
+            IAuditService auditService)
         {
             _context = context;
             _logger = logger;
-            _auditServices = auditServices;
+            _auditService = auditService;
         }
 
-        public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
+        public async Task<TResponse> Handle(
+            TRequest request,
+            RequestHandlerDelegate<TResponse> next,
+            CancellationToken cancellationToken)
         {
-
-
             if (_context.Database.CurrentTransaction != null)
             {
                 return await next();
             }
 
             await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
+
             try
             {
                 var response = await next();
@@ -47,19 +44,21 @@ namespace Lipip.Atomic.EntityFramework.Behaviors.Atomics
                     return response;
                 }
 
-                _auditServices.ApplyAudit(_context);
+                if (_context.ChangeTracker.HasChanges())
+                {
+                    _auditService.ApplyAudit(_context);
+                    await _context.SaveChangesAsync(cancellationToken);
+                }
 
-                await _context.SaveChangesAsync(cancellationToken);
                 await transaction.CommitAsync(cancellationToken);
                 return response;
             }
-            catch (Exception ex)
+            catch 
             {
                 await transaction.RollbackAsync(cancellationToken);
-                _logger.LogError(ex, "Transaction failed for {Request}", typeof(TRequest).Name);
+                //_logger.LogError(ex, "Transaction failed for request {RequestName}", typeof(TRequest).Name);
                 throw;
             }
         }
-
     }
 }

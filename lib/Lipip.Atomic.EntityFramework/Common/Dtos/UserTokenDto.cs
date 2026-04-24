@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Lipip.Atomic.EntityFramework.Infrastructure.Dtos
+namespace Lipip.Atomic.EntityFramework.Common.Dtos
 {
     public class UserTokenDto
     {

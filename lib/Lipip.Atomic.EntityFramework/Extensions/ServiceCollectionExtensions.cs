@@ -1,12 +1,9 @@
-﻿using Azure;
-using Azure.Core;
-using FluentValidation;
+﻿using FluentValidation;
 using Lipip.Atomic.EntityFramework.Behaviors.Atomics;
 using Lipip.Atomic.EntityFramework.Behaviors.Validations;
 using Lipip.Atomic.EntityFramework.Common.Audit;
 using Lipip.Atomic.EntityFramework.Common.Authentications;
-using Lipip.Atomic.EntityFramework.Deprecated.Atomics;
-using Lipip.Atomic.EntityFramework.Infrastructure;
+using Lipip.Atomic.EntityFramework.Common.Security;
 using MapsterMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -38,13 +35,7 @@ public static class ServiceCollectionExtensions
         services.AddHttpContextAccessor();
         services.AddScoped<IAuditService, AuditService>();
         services.AddScoped<ICurrentUser, CurrentUser>();
-
-        //var assemblies = AppDomain.CurrentDomain.GetAssemblies()
-        //    .Where(a =>
-        //        !a.IsDynamic &&
-        //        !string.IsNullOrWhiteSpace(a.FullName) &&
-        //        (assemblyFilter?.Invoke(a) ?? true))
-        //    .ToArray();
+        services.AddScoped<IPasswordHasher, PasswordHasher>();
 
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(applicationAssemblies));
         return services;

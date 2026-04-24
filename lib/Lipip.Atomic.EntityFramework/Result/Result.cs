@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Lipip.Atomic.EntityFramework.Result
+﻿namespace Lipip.Atomic.EntityFramework.Result
 {
     public class Result : IResult
     {
@@ -46,11 +40,11 @@ namespace Lipip.Atomic.EntityFramework.Result
         public static new IResult<T> Failure(string error, int? statusCode = null)
             => new Result<T> { IsSuccess = false, ErrorMessage = error, StatusCode = statusCode };
 
-        public static IResult<T> BadRequest(string error) => Failure(error, 400);
-        public static IResult<T> NotFound(string error) => Failure(error, 404);
-        public static IResult<T> Unauthorized(string error) => Failure(error, 401);
+        public static new IResult<T> BadRequest(string error) => Failure(error, 400);
+        public static new IResult<T> NotFound(string error) => Failure(error, 404);
+        public static new IResult<T> Unauthorized(string error) => Failure(error, 401);
 
-        public static IResult<T> ValidationError(Dictionary<string, string[]> errors)
+        public static new IResult<T> ValidationError(Dictionary<string, string[]> errors)
             => new Result<T>
             {
                 IsSuccess = false,

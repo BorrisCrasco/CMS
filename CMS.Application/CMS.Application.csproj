@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Cms.Persistence\CMS.Persistence.csproj" />
+    <ProjectReference Include="..\lib\Lipip.Atomic.EntityFramework\Lipip.Atomic.EntityFramework.csproj" />
   </ItemGroup>
 
   <ItemGroup>

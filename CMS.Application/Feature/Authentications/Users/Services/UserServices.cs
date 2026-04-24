@@ -1,19 +1,22 @@
 ﻿using Cms.Persistence.Models;
-using CMS.Application.Feature.Authentications.Roles.Dtos;
 using CMS.Application.Feature.Authentications.Roles.Services;
 using CMS.Application.Feature.Authentications.Users.Dtos;
 using CMS.Application.Feature.Authentications.Users.Request;
+using Lipip.Atomic.EntityFramework.Common.Dtos;
 using Lipip.Atomic.EntityFramework.Common.Paginations;
-using Lipip.Atomic.EntityFramework.Infrastructure;
-using Lipip.Atomic.EntityFramework.Infrastructure.Dtos;
+using Lipip.Atomic.EntityFramework.Common.Security;
 using Lipip.Atomic.EntityFramework.Result;
 using MapsterMapper;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace CMS.Application.Feature.Authentications.Users.Services
 {
-    public class UserServices(IUserStore userStore, IMapper mapper, IRoleServices roleServices , IJwtTokenService jwtToken) : IUserServices
+    public class UserServices(
+        IUserStore userStore,
+        IMapper mapper, 
+        IRoleServices roleServices ,
+        IPasswordHasher passwordHasher,
+        IJwtTokenService jwtToken) : IUserServices
     {
         public async Task<IResult<UserDto>> Create(UserDto request, CancellationToken cancellationToken = default)
         {
@@ -24,7 +27,7 @@ namespace CMS.Application.Feature.Authentications.Users.Services
             if (string.IsNullOrWhiteSpace(request.Password))
                 return Result<UserDto>.BadRequest("Password is required");
 
-            PasswordHasher.CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
+            passwordHasher.CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
             var create = mapper.Map<User>(request);
             create.Id = Guid.NewGuid();
@@ -103,6 +106,8 @@ namespace CMS.Application.Feature.Authentications.Users.Services
         {
             var roleExist = await roleServices.RoleExist(request.RoleId, cancellationToken);
 
+            // TODO : Move the validation in fluent validation
+
             if (!roleExist)
                 return Result<UserDto>.NotFound("Role id not found!");
 
@@ -122,9 +127,9 @@ namespace CMS.Application.Feature.Authentications.Users.Services
             var model = await GetByUsername(request.Username, cancellationToken);
 
             if (model is null)
-                return Result<UserAuthenticationDto>.Unauthorized("Invalid username and password!");
+                return Result<UserAuthenticationDto>.Unauthorized("Invalid username or password!");
 
-            var valid = PasswordHasher.VerifyPassword
+            var valid = passwordHasher.VerifyPassword
              (
                 request.Password!,
                 model.PasswordHash,

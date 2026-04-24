@@ -53,7 +53,9 @@ namespace Lipip.Atomic.EntityFramework.Behaviors.Validations
                 var genericResultType = typeof(Result<>).MakeGenericType(valueType);
 
                 var method = genericResultType.GetMethod("ValidationError",
-                    new[] { typeof(Dictionary<string, string[]>) });
+                    new[] { typeof(Dictionary<string, string[]>) })
+                    ?? throw new InvalidOperationException(
+                    $"ValidationError(Dictionary<string, string[]>) was not found on {genericResultType.Name}");
 
                 var failureResult = method.Invoke(null, new object[] { errors });
 
