@@ -18,4 +18,9 @@
     <ProjectReference Include="..\lib\Lipip.Atomic.EntityFramework\Lipip.Atomic.EntityFramework.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Controllers\Authentications\Menus\" />
+    <Folder Include="Controllers\Authentications\Modules\" />
+  </ItemGroup>
+
 </Project>

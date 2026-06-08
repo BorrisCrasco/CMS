@@ -13,13 +13,13 @@ namespace Lipip.Atomic.EntityFramework.Common.Security
         {
             using var hmac = new HMACSHA512();
             salt = hmac.Key;
-            hash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+            hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
         }
 
         public bool VerifyPassword(string password, byte[] storedHash, byte[] storedSalt)
         {
             using var hmac = new HMACSHA512(storedSalt);
-            var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+            var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
 
             return computedHash.SequenceEqual(storedHash);
         }

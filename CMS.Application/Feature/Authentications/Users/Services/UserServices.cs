@@ -39,7 +39,7 @@ namespace CMS.Application.Feature.Authentications.Users.Services
 
             var result = mapper.Map<UserDto>(create);
 
-            return Result.Success(request);
+            return Result.Success(result);
         }
 
         public async Task<IResult<Guid>> Deactivate(Guid id, CancellationToken cancellationToken = default)
@@ -104,16 +104,14 @@ namespace CMS.Application.Feature.Authentications.Users.Services
 
         public async Task<IResult<UserDto>> Update(UserDto request, CancellationToken cancellationToken = default)
         {
-            var roleExist = await roleServices.RoleExist(request.RoleId, cancellationToken);
-
-            // TODO : Move the validation in fluent validation
-
-            if (!roleExist)
-                return Result<UserDto>.NotFound("Role id not found!");
-
             var model = await userStore.GetForUpdate(request.Id, cancellationToken);
             if (model is null)
                 return Result<UserDto>.NotFound("Id not found!");
+
+            var roleExist = await roleServices.RoleExist(request.RoleId, cancellationToken);
+
+            if (!roleExist)
+                return Result<UserDto>.NotFound("Role id not found!");
 
             var dto = mapper.Map(request, model);
 

@@ -14,6 +14,7 @@ namespace CMS.Application.Feature.Authentications.Menus.Services
         public async Task<IResult<MenuDto>> Create(MenuDto request, CancellationToken cancellationToken = default)
         {
             var create = mapper.Map<Menu>(request);
+            create.Id = Guid.NewGuid();
             create.IsActive = true;
 
             await menuStore.Create(create, cancellationToken);
